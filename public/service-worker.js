@@ -1,5 +1,5 @@
-const staticCache = "static-v2";
-const dynamicCache = "dynamic";
+let staticCache = "static-v2";
+let dynamicCache = "dynamic";
 
 self.addEventListener("install", function(event) {
   console.log(`service worker ${event}`);
@@ -8,6 +8,7 @@ self.addEventListener("install", function(event) {
       cache.addAll([
         "/",
         "./index.html",
+        "./offline.html",
         "./src/js/app.js",
         "./src/js/feed.js",
         "./src/js/material.min.js",
@@ -28,8 +29,6 @@ self.addEventListener("install", function(event) {
 });
 
 self.addEventListener("activate", function(event) {
-  console.log(`Service Worker is activated ${event}`);
-
   event.waitUntil(
     caches.keys().then(function(keyList) {
       return Promise.all(
@@ -42,7 +41,6 @@ self.addEventListener("activate", function(event) {
       );
     })
   );
-  return true;
 });
 
 self.addEventListener("fetch", function(event) {
@@ -59,9 +57,9 @@ self.addEventListener("fetch", function(event) {
             });
           })
           .catch(function(err) {
-            if (err) {
-              console.log(err);
-            }
+            caches.open(staticCache).then(function(cache) {
+              return cache.match("./offline.html");
+            });
           });
       }
     })
