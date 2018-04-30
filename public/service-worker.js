@@ -19,7 +19,7 @@ self.addEventListener("install", function(event) {
       // cache.add("/");
       // cache.add("./index.html");
       // cache.add("./src/js/app.js");
-      console.log(`Caching is done`);
+      console.log(`Pre-Caching is done`);
     })
   );
 });
@@ -31,11 +31,22 @@ self.addEventListener("activate", function(event) {
 
 self.addEventListener("fetch", function(event) {
   event.respondWith(
-    caches.match(event.request).then(e => {
-      if (e) {
-        return e;
+    caches.match(event.request).then(response => {
+      if (response) {
+        return response;
       } else {
-        return fetch(event.request);
+        return fetch(event.request)
+          .then(function(res) {
+            return caches.open("dynamic").then(function(cache) {
+              cache.put(event.request.url, res.clone());
+              return res;
+            });
+          })
+          .catch(function(err) {
+            if (err) {
+              console.log(err);
+            }
+          });
       }
     })
   );
