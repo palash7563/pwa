@@ -2,6 +2,7 @@ let staticCache = "static-v2";
 let dynamicCache = "dynamic";
 
 self.addEventListener("install", function(event) {
+  //here App shell is cache while installing the service worker
   console.log(`service worker ${event}`);
   event.waitUntil(
     caches.open(staticCache).then(cache => {
@@ -65,3 +66,36 @@ self.addEventListener("fetch", function(event) {
     })
   );
 });
+
+// For caching only
+
+// self.addEventListener('fetch',function(event){
+//   event.respondWith(
+//     caches.match(event.request)
+//   );
+// })
+
+// For Networking only
+
+// self.addEventListener('fetch',function(event){
+//   event.respondWith(
+//     fetch(event.request)
+//   )
+// });
+
+// Strategy - first network if fails then cache
+
+// self.addEventListener("fetch", function(event) {
+//   event.respondWith(
+//     fetch(event.request)
+//       .then(function(event) {
+//         return caches.open(dynamicCache).then(function(cache) {
+//           cache.put(event.request.url, res.clone());
+//           return res;
+//         });
+//       })
+//       .catch(function(err) {
+//         return caches.match(event.request);
+//       })
+//   );
+// });
