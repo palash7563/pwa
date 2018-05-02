@@ -68,12 +68,40 @@ function createCard() {
   sharedMomentsArea.appendChild(cardWrapper);
 }
 
-const url = "https://pwa-prograssive-web-app.firebaseio.com/posts.json";
+function clearCard() {
+  while (sharedMomentsArea.hasChildNodes()) {
+    sharedMomentsArea.removeChild(sharedMomentsArea.lastChild);
+  }
+}
 
-fetch("https://httpbin.org/get")
+// const url = "https://pwa-prograssive-web-app.firebaseio.com/posts.json";
+
+const url1 = "https://httpbin.org/get";
+let networkData = false;
+
+fetch(url1)
   .then(function(res) {
     return res.json();
   })
   .then(function(data) {
+    console.log(data);
+    networkData = true;
+    clearCard();
     createCard();
   });
+
+if ("caches" in window) {
+  fetch(url1)
+    .then(function(response) {
+      if (response) {
+        return response.json();
+      }
+    })
+    .then(function(data) {
+      console.log(data);
+      if (!networkData) {
+        clearCard();
+        createCard();
+      }
+    });
+}
