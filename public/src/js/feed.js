@@ -74,31 +74,18 @@ function clearCard() {
   }
 }
 
-// const url = "https://pwa-prograssive-web-app.firebaseio.com/posts.json";
+const url = "https://pwa-prograssive-web-app.firebaseio.com/posts.json";
 
-const url1 = "https://httpbin.org/get";
 let networkData = false;
 
-fetch(url1)
-  .then(function(res) {
-    return res.json();
-  })
-  .then(function(data) {
-    console.log(data);
-    networkData = true;
-    clearCard();
-    createCard();
-  });
-
 if ("caches" in window) {
-  fetch(url1)
+  fetch(url)
     .then(function(response) {
       if (response) {
         return response.json();
       }
     })
     .then(function(data) {
-      console.log(data);
       if (!networkData) {
         clearCard();
         createCard();
